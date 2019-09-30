@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:product/add_product_dialog.dart';
 import 'package:product/product.dart';
 import 'package:product/home_presenter.dart';
-import 'package:product/database/database_helper.dart';
+import 'package:product/view.dart';
 
 class ProductList extends StatelessWidget {
   List<Product> country;
@@ -71,13 +71,14 @@ class ProductList extends StatelessWidget {
                               Icons.visibility,
                               color: const Color(0xFF167F67),
                             ),
-                            onPressed: (){
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => viewProduct(context,index)),
-                              );
-//                              viewProduct(context, index);
-                              },
+                              onPressed: ()=>viewProd(country[index], context),
+//                            {
+//                              Navigator.push(
+//                                context,
+//                                MaterialPageRoute(builder: (context) => viewProduct(context,index)),
+//                              );
+////                              viewProduct(context, index);
+//                              },
                           ),
 
                           new IconButton(
@@ -113,6 +114,15 @@ class ProductList extends StatelessWidget {
       context: context,
       builder: (BuildContext context) =>
           new AddProductDialog().buildAboutDialog(context, this, true, product),
+    );
+    homePresenter.updateScreen();
+  }
+
+  viewProd(Product product, BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) =>
+          new ViewProduct().buildAboutDialog(context, this, true, product),
     );
     homePresenter.updateScreen();
   }
@@ -170,30 +180,28 @@ class ProductList extends StatelessWidget {
   }
 
 
-////  To fetch a single product from database
-//  Future viewRecord(Product product) async {
+//  view(Product product) {
 //    var db = new DatabaseHelper();
-//    product.setProductId(product.id);
-//    await db.singleProduct(product);
+//    return db.singleProduct(product);
+//
 //  }
 
 
 //A widget to display the details of a single product
   viewProduct(BuildContext context , int index) {
-
      product=homePresenter.view(country[index]);
-    String product_name='';
-    String product_desc='';
-    String date='';
+     String product_name='';
+     String product_desc='';
+     String date='';
     product_name = product.product.substring(0, 1) + ".";
-    product_desc= product.description.substring(0, 1) + ".";
-    date= product.date.substring(0, 1) + ".";
+   // product_desc= product.description.substring(0, 1) + ".";
+   // date= product.date.substring(0, 1) + ".";
 
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("product details"),
       ),
-      body: new Text("product name"),
+      body: new Text("product name:"'${product_name}'),
 
 
     );

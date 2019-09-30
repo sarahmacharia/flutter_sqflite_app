@@ -61,7 +61,24 @@ class DatabaseHelper {
     await dbClient.rawDelete('DELETE FROM Product WHERE id = ?', [product.id]);
     return res;
   }
+//
+//  Future<product> myProduct(Product product) async {
+//    var dbClient = await db;
+//
+//    int res =
+//    await dbClient.rawDelete('SELECT * FROM Product WHERE id = ?', [product.id]);
+//    return res;
+//  }
 
+//  Future<Product> fetchProduct(int id)async{
+//    var dbClient = await db;
+//     List<Map>results=await dbClient.query("product",columns:
+//      Product.columns,where:"id=?",whereArgs:[id]);
+//
+//     Product product=Product.fromMap(results[0]);
+//     return product;
+//
+//  }
 
 singleProduct(Product product) async {
     var dbClient = await db;

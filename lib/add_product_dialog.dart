@@ -6,19 +6,22 @@ import 'package:product/product.dart';
 
 class AddProductDialog {
   final teProduct = TextEditingController();
-  final teDescription= TextEditingController();
+  final teDescription = TextEditingController();
   final teDate = TextEditingController();
   Product product;
+  DateTime selectedDate = DateTime.now();
 
   static const TextStyle linkStyle = const TextStyle(
     color: Colors.blue,
     decoration: TextDecoration.underline,
+
+
   );
 
-  Widget buildAboutDialog(
-      BuildContext context, _myHomePageState, bool isEdit, Product product) {
+  Widget buildAboutDialog(BuildContext context, _myHomePageState, bool isEdit,
+      Product product) {
     if (product != null) {
-      this.product=product;
+      this.product = product;
       teProduct.text = product.product;
       teDescription.text = product.description;
       teDate.text = product.date;
@@ -44,7 +47,8 @@ class AddProductDialog {
               child: new Container(
                 margin: EdgeInsets.fromLTRB(10.0, 0.0, 10.0, 0.0),
                 child: getAppBorderButton(
-                    isEdit?"Edit":"Add", EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0)),
+                    isEdit ? "Edit" : "Add",
+                    EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0)),
 
 
               ),
@@ -56,52 +60,92 @@ class AddProductDialog {
   }
 
 
-  Widget getTextField(
-      String inputBoxName, TextEditingController inputBoxController) {
-    var loginBtn = new Padding(
-      padding: const EdgeInsets.all(5.0),
-      child: new TextFormField(
-        controller: inputBoxController,
-        decoration: new InputDecoration(
-          hintText: inputBoxName,
+
+//  Future<void> _selectDate(BuildContext context) async {
+//    final DateTime picked = await showDatePicker(
+//      context: context,
+//      initialDate: selectedDate,
+//      firstDate: DateTime(2015, 8),
+//      lastDate: DateTime(2101),
+//    );
+//    if (picked != null && picked != selectedDate)
+//      selectedDate
+//        (picked);
+//  }
+
+//
+//  Future<Null> _selectDate(BuildContext context) async {
+//    final DateTime picked = await showDatePicker(
+//        context: context,
+//        initialDate: selectedDate,
+//        firstDate: DateTime(2015, 8),
+//        lastDate: DateTime(2101));
+////    if (picked != null && picked != selectedDate)
+////      setstate(() {
+////        selectedDate = picked;
+////      });
+//    return picked;
+//  }
+//    datePicker.showDatePicker(context,
+//        showTitleActions: true,
+//        minTime: DateTime(2018, 3, 5),
+//        maxTime: DateTime(2019, 6, 7), onChanged: (date) {
+//          print('change $date');
+//        }, onConfirm: (date) {
+//          print('confirm $date');
+//        }, currentTime: DateTime.now(), locale: LocaleType.zh);
+//  }
+
+
+    Widget getTextField(String inputBoxName,
+        TextEditingController inputBoxController) {
+      var loginBtn = new Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: new TextFormField(
+          controller: inputBoxController,
+          decoration: new InputDecoration(
+            hintText: inputBoxName,
+          ),
         ),
-      ),
-    );
+      );
 
-    return loginBtn;
-  }
+      return loginBtn;
+    }
 
-  Widget getAppBorderButton(String buttonLabel, EdgeInsets margin) {
-    var loginBtn = new Container(
-      margin: margin,
-      padding: EdgeInsets.all(8.0),
-      alignment: FractionalOffset.center,
-      decoration: new BoxDecoration(
-        border: Border.all(color: const Color(0xFF28324E)),
-        borderRadius: new BorderRadius.all(const Radius.circular(6.0)),
-      ),
-      child: new Text(
-        buttonLabel,
-        style: new TextStyle(
-          color: const Color(0xFF28324E),
-
-          fontSize: 20.0,
-          fontWeight: FontWeight.w300,
-          letterSpacing: 0.3,
+    Widget getAppBorderButton(String buttonLabel, EdgeInsets margin) {
+      var loginBtn = new Container(
+        margin: margin,
+        padding: EdgeInsets.all(8.0),
+        alignment: FractionalOffset.center,
+        decoration: new BoxDecoration(
+          border: Border.all(color: const Color(0xFF28324E)),
+          borderRadius: new BorderRadius.all(const Radius.circular(6.0)),
         ),
-      ),
-    );
-    return loginBtn;
-  }
+        child: new Text(
+          buttonLabel,
+          style: new TextStyle(
+            color: const Color(0xFF28324E),
 
-  Future addRecord(bool isEdit) async {
-    var db = new DatabaseHelper();
-    var product = new Product(teProduct.text, teDescription.text, teDate.text);
-    if (isEdit) {
-      product.setProductId(this.product.id);
-      await db.update(product);
-    } else {
-      await db.saveProduct(product);
+            fontSize: 20.0,
+            fontWeight: FontWeight.w300,
+            letterSpacing: 0.3,
+          ),
+        ),
+      );
+      return loginBtn;
+    }
+
+    Future addRecord(bool isEdit) async {
+      var db = new DatabaseHelper();
+      var product = new Product(
+          teProduct.text, teDescription.text, teDate.text);
+      if (isEdit) {
+        product.setProductId(this.product.id);
+        await db.update(product);
+      } else {
+        await db.saveProduct(product);
+      }
     }
   }
-}
+
+
