@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:product/homescreen.dart';
+import 'package:product/user.dart';
+import 'package:product/login.dart';
 
 void main() => runApp(new MyApp());
 
@@ -15,8 +17,12 @@ class MyApp extends StatelessWidget {
         primaryColorDark: const Color(0xFF167F67),
         accentColor: const Color(0xFFFFAD32),
       ),
-      home: new MyHomePage(title: 'Product Database'),
+//      home: new MyHomePage(title: 'Product Database'),
+      home: new Login(),
     );
   }
 
+
 }
+
+

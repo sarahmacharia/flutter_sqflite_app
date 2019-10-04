@@ -8,8 +8,6 @@ import 'package:product/product.dart';
 import 'package:product/home_presenter.dart';
 import 'package:product/list.dart';
 import 'package:product/product.dart';
-import 'package:product/login.dart';
-import 'package:product/home.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -63,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> implements HomeContract {
             Icons.group_add,
             color: Colors.white,
           ),
-          onPressed: (){}
+          onPressed: (){ _openAddProductDialog();}
       ),
     ];
   }
@@ -99,17 +97,15 @@ class _MyHomePageState extends State<MyHomePage> implements HomeContract {
     );
   }
 
-    @override
+
+
+
+
+
+
+  @override
   void screenUpdate() {
     setState(() {});
   }
 
 }
-
-void main() async{
-  Widget _defaultHome=new Login();
-
-
-}
-
-

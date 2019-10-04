@@ -61,42 +61,6 @@ class AddProductDialog {
 
 
 
-//  Future<void> _selectDate(BuildContext context) async {
-//    final DateTime picked = await showDatePicker(
-//      context: context,
-//      initialDate: selectedDate,
-//      firstDate: DateTime(2015, 8),
-//      lastDate: DateTime(2101),
-//    );
-//    if (picked != null && picked != selectedDate)
-//      selectedDate
-//        (picked);
-//  }
-
-//
-//  Future<Null> _selectDate(BuildContext context) async {
-//    final DateTime picked = await showDatePicker(
-//        context: context,
-//        initialDate: selectedDate,
-//        firstDate: DateTime(2015, 8),
-//        lastDate: DateTime(2101));
-////    if (picked != null && picked != selectedDate)
-////      setstate(() {
-////        selectedDate = picked;
-////      });
-//    return picked;
-//  }
-//    datePicker.showDatePicker(context,
-//        showTitleActions: true,
-//        minTime: DateTime(2018, 3, 5),
-//        maxTime: DateTime(2019, 6, 7), onChanged: (date) {
-//          print('change $date');
-//        }, onConfirm: (date) {
-//          print('confirm $date');
-//        }, currentTime: DateTime.now(), locale: LocaleType.zh);
-//  }
-
-
     Widget getTextField(String inputBoxName,
         TextEditingController inputBoxController) {
       var loginBtn = new Padding(

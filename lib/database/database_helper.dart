@@ -4,7 +4,9 @@ import 'dart:io' as io;
 import 'package:product/product.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:product/user.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:product/login.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = new DatabaseHelper.internal();
@@ -32,12 +34,21 @@ class DatabaseHelper {
     // When creating the db, create the table
     await db.execute(
         "CREATE TABLE Product(id INTEGER PRIMARY KEY, product TEXT, description TEXT, date TEXT)");
+    await db.execute(
+        "CREATE TABLE User(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, password TEXT)");
+
   }
+
 
 
   Future<int> saveProduct(Product product) async {
     var dbClient = await db;
     int res = await dbClient.insert("Product", product.toMap());
+    return res;
+  }
+  Future<int> saveUSer(User user) async {
+    var dbClient = await db;
+    int res = await dbClient.insert("User", user.toMap());
     return res;
   }
   Future<List<Product>> getProduct() async {
@@ -53,6 +64,32 @@ class DatabaseHelper {
     print(employees.length);
     return employees;
   }
+  Future<List<User>> getUser() async {
+    var dbClient = await db;
+    List<Map> list = await dbClient.rawQuery('SELECT * FROM  User');
+    List<User> employees= new List();
+    for (int i = 0; i < list.length; i++) {
+      var user =
+      new User(list[i]["firstname"], list[i]["lastname"], list[i]["email"],  list[i]["password"]);
+      user.setUserId(list[i]["id"]);
+      employees.add(user);
+    }
+    print(employees.length);
+    return employees;
+  }
+//  newUser(User newUser) async {
+//    final db = await _db;
+//    //get the biggest id in the table
+//    var table = await db.rawQuery("SELECT MAX(id)+1 as id FROM User");
+//    int id = table.first["id"];
+//    //insert to the table using the new id
+//    var raw = await db.rawInsert(
+//        "INSERT Into User(id,firstname,lastname,email, password)"
+//            " VALUES (?,?,?,?)",
+//        [id, newUser.firstname, newUser.lastname, newUser.email, newUser.password]);
+//    return raw;
+//  }
+
 
   Future<int> deleteProduct(Product product) async {
     var dbClient = await db;
@@ -60,9 +97,23 @@ class DatabaseHelper {
     int res =
     await dbClient.rawDelete('DELETE FROM Product WHERE id = ?', [product.id]);
     return res;
+
+
   }
+
+
+  createUser(User user) async {
+    var result = await _db.rawInsert(
+        "INSERT INTO User (id,firstname,lastname,email, password)"
+            " VALUES (${user.id},${user.firstname},${user.lastname},${user.email}, ${user.password})");
+    return result;
+  }
+
+
+
 //
 //  Future<product> myProduct(Product product) async {
+
 //    var dbClient = await db;
 //
 //    int res =
