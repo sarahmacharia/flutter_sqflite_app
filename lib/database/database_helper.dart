@@ -64,19 +64,38 @@ class DatabaseHelper {
     return employees;
   }
 
-  Future<List<User>> getUser() async {
+  Future<List<User>> getUsers() async {
     var dbClient = await db;
     List<Map> list = await dbClient.rawQuery('SELECT * FROM  User');
     List<User> employees = new List();
     for (int i = 0; i < list.length; i++) {
       var user = new User(list[i]["firstname"], list[i]["lastname"],
           list[i]["email"], list[i]["password"]);
-      print(user.email);
+      print(user.password);
       user.setUserId(list[i]["id"]);
       employees.add(user);
     }
 
     return employees;
+  }
+
+  getUser(User user) async {
+    var response = new Map();
+    var dbClient = await db;
+    List<Map> list = await dbClient.rawQuery(
+        'SELECT * FROM User where email=? and password=?',
+        [user.email, user.password]);
+    if (list.length > 0) {
+      response['data'] = list;
+      response['code'] = 202;
+      response['message'] = 'Login Successful';
+    } else {
+      response['data'] = '';
+      response['code'] = 400;
+      response['message'] = 'Invalid password or email';
+    }
+    ;
+    return response;
   }
 //  newUser(User newUser) async {
 //    final db = await _db;

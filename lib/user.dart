@@ -16,7 +16,10 @@ class User {
     this._email = obj["email"];
     this._password = obj["password"];
   }
-
+  User.test(this._email, this._password) {
+    this._email = this._email;
+    this._password = this._password;
+  }
   String get firstname => _firstname;
 
   String get lastname => _lastname;

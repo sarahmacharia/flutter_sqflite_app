@@ -183,11 +183,15 @@ class _SignupPageState extends State<SignupPage> implements SignupCallBack {
                               (_passwordvalidate == false)) {
                             var user = new User(tefirstname.text,
                                 telastname.text, teemail.text, tepassword.text);
+                            //created database connection
                             var db = new DatabaseHelper();
-
+                            //take a future from the db.create user function
                             var response = db.createUser(user);
+                            //resolve the future<dynaminc>
                             response.then((a) {
+                              //check status code
                               if (a["code"] == 202) {
+                                //create a snack bar showing
                                 Scaffold.of(context).showSnackBar(SnackBar(
                                   backgroundColor: Colors.blueAccent,
                                   content: Text(a["message"]),

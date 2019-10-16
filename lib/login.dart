@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:product/database/database_helper.dart';
 import 'package:product/home.dart';
 import 'package:product/signup.dart';
+import 'package:product/user.dart';
 
 class Login extends StatefulWidget {
   @override
@@ -10,6 +12,14 @@ class Login extends StatefulWidget {
 class _LoginPageState extends State<Login> {
   final teemail = TextEditingController();
   final tepassword = TextEditingController();
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  void _showSnackBar(String text, Color color) {
+    _scaffoldKey.currentState.showSnackBar(new SnackBar(
+      content: new Text(text),
+      backgroundColor: color,
+    ));
+  }
 
   bool _emailvalidate = false;
   bool _passwordvalidate = false;
@@ -68,15 +78,40 @@ class _LoginPageState extends State<Login> {
                 : _passwordvalidate = false;
           });
           if (_passwordvalidate == false && (_emailvalidate == false)) {
+            var user = new User.test(teemail.text, tepassword.text);
+
+            //created database connection
+            var db = new DatabaseHelper();
+            db.getUsers();
+
+            //take a future from the db.create user function
+            var response = db.getUser(user);
+            response.then((a) {
+              print(a);
+              //check status code
+              if (a["code"] == 202) {
+                //create a snack bar showing
+                _showSnackBar(a["message"], Colors.blueAccent);
+                Future.delayed(const Duration(milliseconds: 1500), () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            new MyHomePage(title: "product database")),
+                  );
+                });
+              } else {
+                _showSnackBar(a["message"], Colors.redAccent);
+              }
+            });
 //
-            Navigator.push(
-              context,
-              new MaterialPageRoute(
-                  builder: (ctxt) => new MyHomePage(title: "product database")),
-            );
-          } else {
-            print(teemail.text);
-            print(tepassword.text);
+            // Navigator.push(
+            //   context,
+            //   new MaterialPageRoute(  if (a["code"] == 202) {
+            //create a snack bar showing
+
+            //       builder: (ctxt) => new MyHomePage(title: "product database")),
+            // );
           }
         },
         child: Text("login",
@@ -87,45 +122,48 @@ class _LoginPageState extends State<Login> {
     );
 
     return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("Login to your List"),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-        child: Container(
-          //color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(36.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(height: 45.0),
-                emailfield,
-                SizedBox(height: 25.0),
-                passwordField,
-                SizedBox(
-                  height: 35.0,
+        key: _scaffoldKey,
+        appBar: new AppBar(
+          title: new Text("Login to your List"),
+        ),
+        body: Builder(
+          builder: (context) => Center(
+            child: SingleChildScrollView(
+              child: Container(
+                //color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(36.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      SizedBox(height: 45.0),
+                      emailfield,
+                      SizedBox(height: 25.0),
+                      passwordField,
+                      SizedBox(
+                        height: 35.0,
+                      ),
+                      loginButton,
+                      SizedBox(height: 15.0),
+                      GestureDetector(
+                          child: Text("Click here to register",
+                              style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                  color: Colors.blue)),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => SignupPage()),
+                            );
+                          }),
+                    ],
+                  ),
                 ),
-                loginButton,
-                SizedBox(height: 15.0),
-                GestureDetector(
-                    child: Text("Click here to register",
-                        style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: Colors.blue)),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => SignupPage()),
-                      );
-                    }),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
-      ),
-    );
+        ));
   }
 }
