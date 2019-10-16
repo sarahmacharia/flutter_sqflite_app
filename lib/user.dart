@@ -1,6 +1,5 @@
 class User {
-
-  static final columns=["id","firstname","lastname","email","password"];
+  static final columns = ["id", "firstname", "lastname", "email", "password"];
 
   int id;
 
@@ -16,7 +15,6 @@ class User {
     this._lastname = obj["lastname"];
     this._email = obj["email"];
     this._password = obj["password"];
-
   }
 
   String get firstname => _firstname;
@@ -27,7 +25,6 @@ class User {
 
   String get password => _password;
 
-
   Map<String, dynamic> toMap() {
     var map = new Map<String, dynamic>();
     map["firstname"] = _firstname;
@@ -37,22 +34,20 @@ class User {
     return map;
   }
 
-  fromMap(Map map){
-    User user=new User(_firstname, _lastname, _email,_password);
+  fromMap(Map map) {
+    User user = new User(_firstname, _lastname, _email, _password);
 
-    user.id=map["id"];
-    user._firstname=map["user"];
-    user._lastname=map["user"];
+    user.id = map["id"];
+    user._firstname = map["user"];
+    user._lastname = map["user"];
 
-    user._email=map["user"];
-    user._password=map["user"];
+    user._email = map["user"];
+    user._password = map["user"];
 
     return user;
-
-
   }
+
   void setUserId(int id) {
     this.id = id;
   }
-
 }

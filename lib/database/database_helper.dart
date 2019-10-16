@@ -36,45 +36,46 @@ class DatabaseHelper {
         "CREATE TABLE Product(id INTEGER PRIMARY KEY, product TEXT, description TEXT, date TEXT)");
     await db.execute(
         "CREATE TABLE User(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, password TEXT)");
-
   }
-
-
 
   Future<int> saveProduct(Product product) async {
     var dbClient = await db;
     int res = await dbClient.insert("Product", product.toMap());
     return res;
   }
+
   Future<int> saveUSer(User user) async {
     var dbClient = await db;
     int res = await dbClient.insert("User", user.toMap());
     return res;
   }
+
   Future<List<Product>> getProduct() async {
     var dbClient = await db;
     List<Map> list = await dbClient.rawQuery('SELECT * FROM  Product');
-    List<Product> employees= new List();
+    List<Product> employees = new List();
     for (int i = 0; i < list.length; i++) {
-      var product =
-      new Product(list[i]["product"], list[i]["description"], list[i]["date"]);
+      var product = new Product(
+          list[i]["product"], list[i]["description"], list[i]["date"]);
       product.setProductId(list[i]["id"]);
       employees.add(product);
     }
     print(employees.length);
     return employees;
   }
+
   Future<List<User>> getUser() async {
     var dbClient = await db;
     List<Map> list = await dbClient.rawQuery('SELECT * FROM  User');
-    List<User> employees= new List();
+    List<User> employees = new List();
     for (int i = 0; i < list.length; i++) {
-      var user =
-      new User(list[i]["firstname"], list[i]["lastname"], list[i]["email"],  list[i]["password"]);
+      var user = new User(list[i]["firstname"], list[i]["lastname"],
+          list[i]["email"], list[i]["password"]);
+      print(user.email);
       user.setUserId(list[i]["id"]);
       employees.add(user);
     }
-    print(employees.length);
+
     return employees;
   }
 //  newUser(User newUser) async {
@@ -90,26 +91,36 @@ class DatabaseHelper {
 //    return raw;
 //  }
 
-
   Future<int> deleteProduct(Product product) async {
     var dbClient = await db;
 
-    int res =
-    await dbClient.rawDelete('DELETE FROM Product WHERE id = ?', [product.id]);
+    int res = await dbClient
+        .rawDelete('DELETE FROM Product WHERE id = ?', [product.id]);
     return res;
-
-
   }
-
 
   createUser(User user) async {
-    var result = await _db.rawInsert(
-        "INSERT INTO User (id,firstname,lastname,email, password)"
-            " VALUES (${user.id},${user.firstname},${user.lastname},${user.email}, ${user.password})");
-    return result;
+    var response = new Map();
+    var dbClient = await db;
+
+    var count = await dbClient.rawQuery(
+        'SELECT count(*) as count FROM  User where email=?', [user.email]);
+
+    if (count[0]["count"] == 0) {
+      var result = await _db.rawInsert(
+          'INSERT INTO User (firstname,lastname,email, password) VALUES (?,?,?,?)',
+          [user.firstname, user.lastname, user.email, user.password]);
+      response['data'] = result;
+      response['code'] = 202;
+      response['message'] = 'Account created';
+    } else {
+      response['data'] = '';
+      response['code'] = 400;
+      response['message'] = 'User exists';
+    }
+    ;
+    return response;
   }
-
-
 
 //
 //  Future<product> myProduct(Product product) async {
@@ -131,17 +142,17 @@ class DatabaseHelper {
 //
 //  }
 
-singleProduct(Product product) async {
+  singleProduct(Product product) async {
     var dbClient = await db;
 //    var res =
 //    await dbClient.rawDelete('SELECT FROM Product WHERE id = ?',[product.id]);
-    var res=dbClient.query("Product", where: "id=?",whereArgs: [product.id]);
+    var res = dbClient.query("Product", where: "id=?", whereArgs: [product.id]);
     return res;
   }
 
   Future<bool> update(Product product) async {
     var dbClient = await db;
-    int res =   await dbClient.update("Product", product.toMap(),
+    int res = await dbClient.update("Product", product.toMap(),
         where: "id = ?", whereArgs: <int>[product.id]);
     return res > 0 ? true : false;
   }

@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:product/database/database_helper.dart';
 import 'package:product/product.dart';
+import  'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:intl/intl.dart';
 
 class AddProductDialog {
   final teProduct = TextEditingController();
@@ -37,6 +39,7 @@ class AddProductDialog {
             getTextField("Enter product name", teProduct),
             getTextField("Enter description of product", teDescription),
             getTextField("Date", teDate),
+
 
             new GestureDetector(
               onTap: () {

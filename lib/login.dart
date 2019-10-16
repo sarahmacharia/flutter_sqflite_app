@@ -1,58 +1,84 @@
 import 'package:flutter/material.dart';
-import 'package:product/home_presenter.dart';
-import 'package:product/database/database_helper.dart';
-import 'package:product/product.dart';
-import 'package:product/user.dart';
 import 'package:product/home.dart';
+import 'package:product/signup.dart';
 
+class Login extends StatefulWidget {
+  @override
+  _LoginPageState createState() => new _LoginPageState();
+}
 
-class Login extends StatelessWidget {
+class _LoginPageState extends State<Login> {
+  final teemail = TextEditingController();
+  final tepassword = TextEditingController();
 
+  bool _emailvalidate = false;
+  bool _passwordvalidate = false;
 
   @override
-  Widget build (BuildContext context) {
+  void dispose() {
+    teemail.dispose();
+    tepassword.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
-    final usernamefield= TextField(
-      obscureText: false,
+    final emailfield = TextField(
+      controller: teemail,
       style: style,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "email",
+          errorText: _emailvalidate ? " the email address is not valid" : null,
           border:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
-
-
-
-
 
     final passwordField = TextField(
       obscureText: true,
+      controller: tepassword,
       style: style,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Password",
+          errorText:
+              _passwordvalidate ? "password field cannot be empty" : null,
           border:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
 
     final loginButton = Material(
       elevation: 5.0,
       color: Color(0xff01A0C7),
       child: MaterialButton(
-        minWidth: MediaQuery
-            .of(context)
-            .size
-            .width,
+        minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
+          setState(() {
+            if (teemail.text.isEmpty) {
+              _emailvalidate = true;
+            } else {
+              _emailvalidate = false;
+            }
+            ;
+            tepassword.text.isEmpty
+                ? _passwordvalidate = true
+                : _passwordvalidate = false;
+          });
+          if (_passwordvalidate == false && (_emailvalidate == false)) {
 //
-        Navigator.push(
-          context,
-          new MaterialPageRoute(builder: (ctxt) => new MyHomePage(title: "product database")),);
-
-          },
+            Navigator.push(
+              context,
+              new MaterialPageRoute(
+                  builder: (ctxt) => new MyHomePage(title: "product database")),
+            );
+          } else {
+            print(teemail.text);
+            print(tepassword.text);
+          }
+        },
         child: Text("login",
             textAlign: TextAlign.center,
             style: style.copyWith(
@@ -60,12 +86,12 @@ class Login extends StatelessWidget {
       ),
     );
 
-
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("Login to your List"),
       ),
       body: Center(
+        child: SingleChildScrollView(
         child: Container(
           //color: Colors.white,
           child: Padding(
@@ -74,250 +100,32 @@ class Login extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-
                 SizedBox(height: 45.0),
-
-                usernamefield,
+                emailfield,
                 SizedBox(height: 25.0),
-
                 passwordField,
                 SizedBox(
                   height: 35.0,
                 ),
-
                 loginButton,
-                SizedBox(
-                    height: 15.0),
+                SizedBox(height: 15.0),
                 GestureDetector(
-                    child: Text("Click here to register", style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue)),
+                    child: Text("Click here to register",
+                        style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.blue)),
                     onTap: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => Register()),
+                        MaterialPageRoute(builder: (context) => SignupPage()),
                       );
-                    }
-                ),
+                    }),
               ],
             ),
           ),
         ),
       ),
-    );
-  }
-}
-
-class SecondScreen extends StatelessWidget {
-  @override
-  Widget build (BuildContext ctxt) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text("product database"),
-      ),
-      body: new Text("Another Page...!!!!!!"),
-    );
-  }
-}
-
-
-
-
-class Register extends StatelessWidget {
-
-  final tefirstname = TextEditingController();
-  final telastname = TextEditingController();
-  final teemail = TextEditingController();
-  final tepassword = TextEditingController();
-  User  user;
-
-
-
-  displayRecord() {
-    homePresenter.updateScreen();
-  }
-  HomePresenter homePresenter;
-  @override
-  Widget build (BuildContext context) {
-    TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
-
-
-
-    final firstnameField= TextField(
-      obscureText: false,
-      style: style,
-        controller: tefirstname,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Enter firstname",
-          border:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-    final lastnameField= TextField(
-      obscureText: false,
-      controller: telastname,
-      style: style,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Enter lastname",
-          border:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-
-
-
-    final emailField= TextField(
-      obscureText: false,
-      style: style,
-      controller: teemail,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Enter email",
-          border:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-
-
-    final passwordField = TextField(
-      obscureText: true,
-      style: style,
-      controller: tepassword,
-      decoration: InputDecoration(
-          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Enter Password",
-          border:
-          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
-    );
-
-    final signupButton = Material(
-      elevation: 5.0,
-      color: Color(0xff01A0C7),
-      child: MaterialButton(
-        minWidth: MediaQuery
-            .of(context)
-            .size
-            .width,
-        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Register()),
-          );},
-        child: Text("signup",
-            textAlign: TextAlign.center,
-            style: style.copyWith(
-                color: Colors.white, fontWeight: FontWeight.bold)),
       ),
     );
-
-
-    return new Scaffold(
-        appBar: new AppBar(
-          title: new Text("sign up"),
-        ),
-        body: Center(
-          child:SingleChildScrollView(
-
-            child: Container(
-            //color: Colors.white,
-            child: Padding(
-            padding: const EdgeInsets.all(36.0),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-
-            SizedBox(height: 45.0),
-        firstnameField,
-        SizedBox(height: 25.0),
-        lastnameField,
-              SizedBox(height: 25.0),
-              emailField,
-        SizedBox(height: 25.0),
-        passwordField,
-        SizedBox(
-          height: 35.0,
-        ),
-
-        signupButton,
-        SizedBox(
-            height: 15.0),
-        GestureDetector(
-        child: Text("Click here to login", style: TextStyle(decoration: TextDecoration.underline, color: Colors.blue)),
-            onTap: () {
-          Navigator.push(
-          context,
-         MaterialPageRoute(builder: (context) => Login()),
-          );
-         }
-        ),
-            ],
-        ),
-            ),
-            ),
-        ),
-        ),
-    );
-  }
-
-  Future addRecord() async {
-    var db = new DatabaseHelper();
-    var user = new User(
-        tefirstname.text, telastname.text, teemail.text, tepassword.text);
-    user.setUserId(this.user.id);
-    await db.saveUSer(user);
   }
 }
-
-
-
-
-
-Widget getTextField(String inputBoxName,
-    TextEditingController inputBoxController) {
-  var signupBtn = new Padding(
-    padding: const EdgeInsets.all(5.0),
-    child: new TextFormField(
-      controller: inputBoxController,
-      decoration: new InputDecoration(
-        hintText: inputBoxName,
-      ),
-    ),
-  );
-
-  return signupBtn;
-}
-
-Widget getAppBorderButton(String buttonLabel, EdgeInsets margin) {
-  var loginBtn = new Container(
-    margin: margin,
-    padding: EdgeInsets.all(8.0),
-    alignment: FractionalOffset.center,
-    decoration: new BoxDecoration(
-      border: Border.all(color: const Color(0xFF28324E)),
-      borderRadius: new BorderRadius.all(const Radius.circular(6.0)),
-    ),
-    child: new Text(
-      buttonLabel,
-      style: new TextStyle(
-        color: const Color(0xFF28324E),
-
-        fontSize: 20.0,
-        fontWeight: FontWeight.w300,
-        letterSpacing: 0.3,
-      ),
-    ),
-  );
-  return loginBtn;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-

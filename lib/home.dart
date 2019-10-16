@@ -3,11 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:product/add_product_dialog.dart';
-import 'package:product/database/database_helper.dart';
 import 'package:product/product.dart';
 import 'package:product/home_presenter.dart';
 import 'package:product/list.dart';
-import 'package:product/product.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
