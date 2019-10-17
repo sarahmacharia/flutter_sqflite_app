@@ -23,6 +23,17 @@ class _LoginPageState extends State<Login> {
 
   bool _emailvalidate = false;
   bool _passwordvalidate = false;
+  bool rememberMe = false;
+
+  void _onRememberMeChanged(bool newValue) => setState(() {
+        rememberMe = newValue;
+
+        if (rememberMe) {
+          // TODO: Here goes your functionality that remembers the user.
+        } else {
+          // TODO: Forget the user
+        }
+      });
 
   @override
   void dispose() {
@@ -45,6 +56,18 @@ class _LoginPageState extends State<Login> {
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
+
+    final mycheckbox = CheckboxListTile(
+        title: Text("Remember Me"),
+        controlAffinity: ListTileControlAffinity.trailing, //    <-- label
+        value: rememberMe,
+        onChanged: (bool newValue) {
+          setState(() {
+            rememberMe ? rememberMe = false : rememberMe = true;
+
+            ;
+          });
+        });
 
     final passwordField = TextField(
       obscureText: true,
@@ -146,6 +169,7 @@ class _LoginPageState extends State<Login> {
                       ),
                       loginButton,
                       SizedBox(height: 15.0),
+                      mycheckbox,
                       GestureDetector(
                           child: Text("Click here to register",
                               style: TextStyle(
