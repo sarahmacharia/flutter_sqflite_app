@@ -21,9 +21,19 @@ class _LoginPageState extends State<Login> {
     ));
   }
 
+  Widget _visibilityIcon(bool _isObscured) {
+    if (_isObscured) {
+      return new Icon(Icons.visibility_off);
+    } else {
+      return new Icon(Icons.visibility);
+    }
+  }
+
   bool _emailvalidate = false;
   bool _passwordvalidate = false;
   bool rememberMe = false;
+  bool _isObscured = true;
+  String passwordError = "password field cannot be empty";
 
   void _onRememberMeChanged(bool newValue) => setState(() {
         rememberMe = newValue;
@@ -40,6 +50,15 @@ class _LoginPageState extends State<Login> {
     teemail.dispose();
     tepassword.dispose();
     super.dispose();
+  }
+
+  bool validatePassword(String value) {
+    String pattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    RegExp regex = new RegExp(pattern);
+    print(value);
+
+    return regex.hasMatch(value);
   }
 
   @override
@@ -64,16 +83,22 @@ class _LoginPageState extends State<Login> {
         onChanged: (bool newValue) {
           setState(() {
             rememberMe ? rememberMe = false : rememberMe = true;
-
-            ;
           });
         });
 
     final passwordField = TextField(
-      obscureText: true,
+      obscureText: _isObscured,
       controller: tepassword,
       style: style,
       decoration: InputDecoration(
+          suffixIcon: IconButton(
+            icon: _visibilityIcon(_isObscured),
+            onPressed: () {
+              setState(() {
+                _isObscured = !_isObscured;
+              });
+            },
+          ),
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Password",
           errorText:
@@ -92,13 +117,24 @@ class _LoginPageState extends State<Login> {
           setState(() {
             if (teemail.text.isEmpty) {
               _emailvalidate = true;
+            } else if (!teemail.text.contains('@') ||
+                !teemail.text.contains('.com')) {
+              _emailvalidate = true;
             } else {
               _emailvalidate = false;
             }
-            ;
-            tepassword.text.isEmpty
-                ? _passwordvalidate = true
-                : _passwordvalidate = false;
+
+            if (tepassword.text.isEmpty) {
+              _passwordvalidate = true;
+            } else if (!validatePassword(tepassword.text)) {
+              setState(() {
+                passwordError =
+                    "Must have one uppercase,lowercase,digit,special character and atleast 8 characters";
+              });
+              _passwordvalidate = true;
+            } else {
+              _passwordvalidate = false;
+            }
           });
           if (_passwordvalidate == false && (_emailvalidate == false)) {
             var user = new User.test(teemail.text, tepassword.text);

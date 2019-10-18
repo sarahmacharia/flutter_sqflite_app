@@ -35,7 +35,7 @@ class DatabaseHelper {
     await db.execute(
         "CREATE TABLE Product(id INTEGER PRIMARY KEY, product TEXT, description TEXT, date TEXT)");
     await db.execute(
-        "CREATE TABLE User(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, password TEXT)");
+        "CREATE TABLE User(id INTEGER PRIMARY KEY, firstname TEXT, lastname TEXT, email TEXT, password TEXT, confirmpassword TEXT)");
   }
 
   Future<int> saveProduct(Product product) async {

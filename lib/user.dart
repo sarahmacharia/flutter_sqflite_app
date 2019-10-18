@@ -1,5 +1,12 @@
 class User {
-  static final columns = ["id", "firstname", "lastname", "email", "password"];
+  static final columns = [
+    "id",
+    "firstname",
+    "lastname",
+    "email",
+    "password",
+    "confirmpassword"
+  ];
 
   int id;
 
@@ -8,7 +15,12 @@ class User {
   String _email;
   String _password;
 
-  User(this._firstname, this._lastname, this._email, this._password);
+  User(
+    this._firstname,
+    this._lastname,
+    this._email,
+    this._password,
+  );
 
   User.map(dynamic obj) {
     this._firstname = obj["firstname"];
@@ -34,6 +46,7 @@ class User {
     map["lastname"] = _lastname;
     map["email"] = _email;
     map["password"] = _password;
+
     return map;
   }
 

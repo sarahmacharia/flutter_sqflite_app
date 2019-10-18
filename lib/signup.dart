@@ -15,7 +15,7 @@ class _SignupPageState extends State<SignupPage> implements SignupCallBack {
   bool _isLoading = false;
   final formKey = new GlobalKey<FormState>();
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String _firstname, _lastname, _email, _password;
+  String _firstname, _lastname, _email, _password, _confirmpassword;
   SignupResponse _response;
   _SignupPageState() {
     _response = new SignupResponse(this);
@@ -26,7 +26,8 @@ class _SignupPageState extends State<SignupPage> implements SignupCallBack {
       setState(() {
         _isLoading = true;
         form.save();
-        _response.doSignup(_firstname, _lastname, _email, _password);
+        _response.doSignup(
+            _firstname, _lastname, _email, _password, _confirmpassword);
       });
     }
   }
@@ -37,15 +38,27 @@ class _SignupPageState extends State<SignupPage> implements SignupCallBack {
     ));
   }
 
+  Widget _visibilityIcon(bool _isObscured) {
+    if (_isObscured) {
+      return new Icon(Icons.visibility_off);
+    } else {
+      return new Icon(Icons.visibility);
+    }
+  }
+
   final tefirstname = TextEditingController();
   final telastname = TextEditingController();
   final teemail = TextEditingController();
   final tepassword = TextEditingController();
+  final teconfirmpassword = TextEditingController();
   User user;
   bool _validate = false;
   bool _lastnamevalidate = false;
   bool _emailvalidate = false;
   bool _passwordvalidate = false;
+  bool _confirmpasswordvalidate = false;
+  bool _isObscured = true;
+  String passwordError = "password field cannot be empty";
 
   @override
   void dispose() {
@@ -53,7 +66,17 @@ class _SignupPageState extends State<SignupPage> implements SignupCallBack {
     telastname.dispose();
     teemail.dispose();
     tepassword.dispose();
+    teconfirmpassword.dispose();
     super.dispose();
+  }
+
+  bool validatePassword(String value) {
+    String pattern =
+        r'^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[!@#\$&*~]).{8,}$';
+    RegExp regex = new RegExp(pattern, caseSensitive: true, multiLine: false);
+    print(value);
+
+    return regex.hasMatch(value);
   }
 
   displayRecord() {
@@ -69,6 +92,7 @@ class _SignupPageState extends State<SignupPage> implements SignupCallBack {
       obscureText: false,
       style: style,
       controller: tefirstname,
+      keyboardType: TextInputType.text,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Enter firstname",
@@ -102,18 +126,55 @@ class _SignupPageState extends State<SignupPage> implements SignupCallBack {
     );
 
     final passwordField = TextField(
-      obscureText: true,
+      obscureText: _isObscured,
       style: style,
       controller: tepassword,
       decoration: InputDecoration(
+          suffixIcon: IconButton(
+            icon: _visibilityIcon(_isObscured),
+            onPressed: () {
+              setState(() {
+                _isObscured = !_isObscured;
+              });
+            },
+          ),
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Enter Password",
-          errorText:
-              _passwordvalidate ? "password field cannot be empty" : null,
+          errorText: _passwordvalidate ? passwordError : null,
           border:
               OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
-
+    final confirmpasswordField = TextField(
+      onChanged: (text) {
+        if (tepassword.text != teconfirmpassword.text) {
+          setState(() {
+            passwordError = "passwords do not match";
+            _passwordvalidate = true;
+            _confirmpasswordvalidate = true;
+          });
+        } else {
+          _passwordvalidate = false;
+          _confirmpasswordvalidate = false;
+        }
+      },
+      obscureText: _isObscured,
+      style: style,
+      controller: teconfirmpassword,
+      decoration: InputDecoration(
+          suffixIcon: IconButton(
+            icon: _visibilityIcon(_isObscured),
+            onPressed: () {
+              setState(() {
+                _isObscured = !_isObscured;
+              });
+            },
+          ),
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: "Confirm Password",
+          errorText: _confirmpasswordvalidate ? passwordError : null,
+          border:
+              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
     return new Scaffold(
       key: _scaffoldKey,
       appBar: new AppBar(
@@ -140,6 +201,10 @@ class _SignupPageState extends State<SignupPage> implements SignupCallBack {
                   SizedBox(
                     height: 35.0,
                   ),
+                  confirmpasswordField,
+                  SizedBox(
+                    height: 35.0,
+                  ),
                   Builder(
                     builder: (context) => MaterialButton(
                         elevation: 5.0,
@@ -153,34 +218,14 @@ class _SignupPageState extends State<SignupPage> implements SignupCallBack {
                                 fontWeight: FontWeight.bold)),
                         onPressed: () {
                           setState(() {
-                            tefirstname.text.isEmpty
-                                ? _validate = true
-                                : _validate = false;
-                            telastname.text.isEmpty
-                                ? _lastnamevalidate = true
-                                : _lastnamevalidate = false;
-                            //&&
-                            if (teemail.text.isEmpty) {
-                              _emailvalidate = true;
-                            } else {
-                              if (teemail.text.contains('@')) {
-                                _emailvalidate = false;
-                              } else {
-                                _emailvalidate = true;
-                              }
-
-                              _emailvalidate = false;
-                            }
-                            ;
-                            tepassword.text.isEmpty
-                                ? _passwordvalidate = true
-                                : _passwordvalidate = false;
+                            validator();
                           });
 
                           if (_validate == false &&
                               (_lastnamevalidate == false) &&
                               (_emailvalidate == false) &&
-                              (_passwordvalidate == false)) {
+                              (_passwordvalidate == false) &&
+                              (_confirmpasswordvalidate == false)) {
                             var user = new User(tefirstname.text,
                                 telastname.text, teemail.text, tepassword.text);
                             //created database connection
@@ -238,6 +283,49 @@ class _SignupPageState extends State<SignupPage> implements SignupCallBack {
         ),
       ),
     );
+  }
+
+  void validator() {
+    if (tefirstname.text.isEmpty) {
+      _validate = true;
+    } else {
+      _validate = false;
+    }
+    if (telastname.text.isEmpty) {
+      _lastnamevalidate = true;
+    } else {
+      _lastnamevalidate = false;
+    }
+    if (teemail.text.isEmpty) {
+      _emailvalidate = true;
+    } else if (!teemail.text.contains('@') || !teemail.text.contains('.com')) {
+      _emailvalidate = true;
+    } else {
+      _emailvalidate = false;
+    }
+
+    if (tepassword.text.isEmpty) {
+      _passwordvalidate = true;
+    } else if (!validatePassword(tepassword.text)) {
+      setState(() {
+        passwordError =
+            "Must have one uppercase,lowercase,digit,special character and atleast 8 characters";
+      });
+      _passwordvalidate = true;
+    } else {
+      _passwordvalidate = false;
+    }
+    if (teconfirmpassword.text.isEmpty) {
+      _confirmpasswordvalidate = true;
+    } else if (tepassword.text != teconfirmpassword.text) {
+      setState(() {
+        passwordError = "passwords do not match";
+        _passwordvalidate = true;
+        _confirmpasswordvalidate = true;
+      });
+    } else {
+      _confirmpasswordvalidate = false;
+    }
   }
 
   @override
